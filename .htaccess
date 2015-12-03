@@ -1,7 +1,0 @@
-deny from all
-<FilesMatch "index.html">
- Allow from all
- </FilesMatch>
-<FilesMatch "logo.png">
- Allow from all
- </FilesMatch>
