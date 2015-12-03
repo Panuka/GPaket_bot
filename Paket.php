@@ -28,7 +28,7 @@ class Paket extends \TelegramBot
 
     private function regExp($word)
     {
-        return '/([\W]|^)(' . preg_quote($word) . ')[!)[.\"\'*0-9?]*$/';
+        return '/([\W]|^)(' . preg_quote($word) . ')[!)[.\"\'*0-9?]*$/u';
     }
 
     private function file($relative_path)
