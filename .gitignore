@@ -7,8 +7,6 @@ config.php
 .idea/modules.xml
 .idea/vcs.xml
 .idea/workspace.xml
-
-
 /var/bootstrap.php.cache
 /var/cache/*
 /app/config/parameters.yml
@@ -16,6 +14,15 @@ config.php
 !var/cache/.gitkeep
 !var/logs/.gitkeep
 /var/SymfonyRequirements.php
+/var/
+/var/bootstrap.php.cache
+/var/cache/*
+!var/cache/.gitkeep
+!var/logs/.gitkeep
+/var/logs/*
+!var/sessions/.gitkeep
+/var/SymfonyRequirements.php
+/app/config/parameters.yml
 /build/
 /vendor/
 /bin/
@@ -23,3 +30,5 @@ config.php
 /web/app_dev.php
 /web/bundles/
 /web/config.php
+/composer.phar
+/phpunit.xml
