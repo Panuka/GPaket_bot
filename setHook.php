@@ -6,8 +6,8 @@
  * Time: 11:09
  */
 
+use Telegram\Paket;
 
-include 'TelegramBot.php';
-include 'Paket.php';
+include 'vendor/autoload.php';
 $tg = new Paket($_SERVER['DOCUMENT_ROOT']);
 $tg->setHook();

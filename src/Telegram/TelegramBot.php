@@ -1,11 +1,13 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: panuka
  * Date: 03.12.15
  * Time: 10:12
  */
+
+namespace Telegram;
+
 abstract class TelegramBot {
 
     private $token;
@@ -21,7 +23,7 @@ abstract class TelegramBot {
 
     public function setHook($file = "hook.php") {
         $url = "https://$_SERVER[SERVER_NAME]/$file";
-        $req = $this->makeRequest("/setWebhook?url=$url");
+        return $this->makeRequest("/setWebhook?url=$url");
     }
 
 }

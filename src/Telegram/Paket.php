@@ -6,7 +6,10 @@
  * Date: 02.12.2015
  * Time: 18:48
  */
-class Paket extends \TelegramBot
+
+namespace Telegram;
+
+class Paket extends TelegramBot
 {
     private $answers = [];
     private $regexps;
@@ -28,7 +31,7 @@ class Paket extends \TelegramBot
 
     private function regExp($word)
     {
-        return '/([\W]|^)(' . preg_quote($word) . ')[!)[.\"\'*0-9?]*$/u';
+        return '/([\W]|^)(' . preg_quote($word) . ')[!)[.:;\"\'*0-9? ]*$/u';
     }
 
     private function file($relative_path)
@@ -53,10 +56,16 @@ class Paket extends \TelegramBot
                 $chat_id = $msg['message']['chat']['id'];
                 $reply = $msg['message']['message_id'];
                 $letter_start = $matches[0][1] + $matches[1][1] + $matches[2][1] + mb_strlen($matches[2][0]);
-                $letter_total = strlen($txt) - $letter_start;
-                $_txt = substr($msg['message']['text'], $letter_start, $letter_total);
+                $letter_total = mb_strlen($txt) - $letter_start;
+                $_txt = $this->convertToUtf8(
+                    mb_substr(
+                        $msg['message']['text'],
+                        $letter_start,
+                        $letter_total
+                    )
+                );
                 $_answ = &$this->answers[$i];
-                $text = urlencode($this->convertToUtf8($_answ[array_rand($_answ)] . $_txt));
+                $text = urlencode($_answ[array_rand($_answ)] . $_txt);
                 $this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
             }
         }
