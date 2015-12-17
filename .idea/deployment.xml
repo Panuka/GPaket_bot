@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="tp://waws-prod-bay-035.ftp.azurewebsites.windows.net" promptOnLocalOverwrite="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="gpaketpro.com" promptOnLocalOverwrite="false">
     <serverData>
       <paths name="gpaket">
         <serverdata>
@@ -9,7 +9,7 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="tp://waws-prod-bay-035.ftp.azurewebsites.windows.net">
+      <paths name="gpaketpro.com">
         <serverdata>
           <mappings>
             <mapping deploy="/site/wwwroot" local="$PROJECT_DIR$" web="/" />
@@ -17,5 +17,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>
