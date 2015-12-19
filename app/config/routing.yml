@@ -1,3 +1,3 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+gpaket:
+    resource: "@GpaketBundle/Resources/config/routing.yml"
+    prefix:   /

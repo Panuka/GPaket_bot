@@ -1,0 +1,6 @@
+gpaket_homepage:
+    path:     /
+    defaults: { _controller: GpaketBundle:Default:index }
+telegram_ep:
+    path:     /telegram/
+    defaults: { _controller: GpaketBundle:Default:index }
