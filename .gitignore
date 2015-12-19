@@ -32,3 +32,4 @@ config.php
 /web/config.php
 /composer.phar
 /phpunit.xml
+.idea
