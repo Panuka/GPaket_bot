@@ -9,13 +9,6 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="tp://waws-prod-bay-035.ftp.azurewebsites.windows.net">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/site/wwwroot" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
     </serverData>
   </component>
 </project>
