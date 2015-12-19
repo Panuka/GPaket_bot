@@ -7,37 +7,24 @@
  * Time: 18:48
  */
 
-namespace Telegram;
+namespace GpaketBundle\Telegram;
+
+use GpaketBundle\Entity\Dictionary;
 
 class Paket extends TelegramBot
 {
-    private $answers = [];
-    private $regexps;
-    private $root;
+    /**
+     * @var Dictionary
+     */
+    private $dictionary;
 
-    public function __construct($dir)
-    {
-        $this->root = $dir . DIRECTORY_SEPARATOR;
-        require_once $this->file('config.php');
-        $confDefined = isset ($token) && isset ($answers) && isset ($regexps);
-        if (!$confDefined)
-            die('Config file not found or broken');
+    public function __construct($token, $dics=null) {
         $this->setToken($token);
-
-        $this->answers = $answers;
-        foreach ($regexps as $regexp)
-            $this->regexps[] = $this->regExp($regexp);
+        $this->dictionary = $dics;
     }
 
-    private function regExp($word)
-    {
-        return '/([\W]|^)(' . preg_quote($word) . ')[!)[.:;\"\'*0-9? ]*$/u';
-    }
-
-    private function file($relative_path)
-    {
-        $path = $this->root . $relative_path;
-        return $path;
+    private function regExp($word) {
+        return "/([\\W]|^)($word)[!)[.:;\"'*0-9? ]*$/u";
     }
 
     private function convertToUtf8($text)
@@ -49,10 +36,23 @@ class Paket extends TelegramBot
     {
         $inp = file_get_contents('php://input');
         $msg = json_decode($inp, true);
+
+        $msg = array(
+            'message' => array(
+                'message_id' => 1,
+                'text' => 'а вот и нет',
+                'chat' => array(
+                    'id' => 1
+                ),
+            )
+        );
+
         $msg_text = $msg['message']['text'];
         $txt = mb_strtolower($msg_text, 'UTF8');
-        foreach ($this->regexps as $i => $regexp) {
-            if ($matches = $this->isRegexpMatch($regexp, $txt)) {
+        foreach ($this->dictionary as $dic_id => $dic) {
+            $preg = $this->regExp($dic->getPregKeyword());
+            if ($matches = $this->isRegexpMatch($preg, $txt)) {
+                dump($matches);
                 $chat_id = $msg['message']['chat']['id'];
                 $reply = $msg['message']['message_id'];
                 $letter_start = $matches[0][1] + $matches[1][1] + $matches[2][1] + mb_strlen($matches[2][0]);
@@ -64,7 +64,7 @@ class Paket extends TelegramBot
                         $letter_total
                     )
                 );
-                $_answ = &$this->answers[$i];
+                $_answ = $dic->getAnswers();
                 $text = urlencode($_answ[array_rand($_answ)] . $_txt);
                 $this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
             }

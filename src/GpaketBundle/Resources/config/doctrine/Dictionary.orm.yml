@@ -1,0 +1,17 @@
+GpaketBundle\Entity\Dictionary:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\DictionaryRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        keyword:
+            type: string
+            length: 255
+        answers:
+            type: array
+    lifecycleCallbacks: {  }

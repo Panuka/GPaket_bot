@@ -1,0 +1,16 @@
+GpaketBundle\Entity\Config:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\ConfigRepository
+    id:
+        id:
+            type: string
+            id: true
+    fields:
+        value:
+            type: string
+            length: 255
+        group:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

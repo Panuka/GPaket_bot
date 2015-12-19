@@ -3,4 +3,10 @@ gpaket_homepage:
     defaults: { _controller: GpaketBundle:Default:index }
 telegram_ep:
     path:     /telegram/
-    defaults: { _controller: GpaketBundle:Default:index }
+    defaults: { _controller: GpaketBundle:Telegram:index }
+telegram_setHook:
+    path:     /telegram/setHook
+    defaults: { _controller: GpaketBundle:Telegram:setHook }
+telegram_init:
+    path:     /telegram/init
+    defaults: { _controller: GpaketBundle:Telegram:init }
