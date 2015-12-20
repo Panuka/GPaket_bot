@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class TelegramController extends Controller
 {
@@ -40,24 +41,27 @@ class TelegramController extends Controller
         return mb_convert_encoding($text, 'UTF8', mb_detect_encoding($text));
     }
 
-    public function process()
-    {
-        $inp = file_get_contents('php://input');
+    private function addToLog($data) {
         $log = new Log();
-        $log->setData($inp);
-        $log->setDate(new \DateTime());
+        $dt = new \DateTime();
+        $log->setData(json_encode($data));
+        $log->setDate($dt);
         $this->db->persist($log);
         $this->db->flush();
+    }
 
+    public function process()
+    {
+        $msg = json_decode(file_get_contents('php://input'), true);
+//        $msg = json_decode('{"update_id":979812671,"message":{"message_id":235747,"from":{"id":90819247,"first_name":"Kirill","last_name":"Nikolaenko","username":"JIoBsTeP"},"chat":{"id":90819247,"first_name":"Kirill","last_name":"Nikolaenko","username":"JIoBsTeP","type":"private"},"date":1450594314,"text":"\u043d\u0435\u0442"}}', true);
+        $this->addToLog($msg);
 
-        $msg = json_decode($inp, true);
 
         $msg_text = $msg['message']['text'];
         $txt = mb_strtolower($msg_text, 'UTF8');
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
             if ($matches = $this->isRegexpMatch($preg, $txt)) {
-                dump($matches);
                 $chat_id = $msg['message']['chat']['id'];
                 $reply = $msg['message']['message_id'];
                 $letter_start = $matches[0][1] + $matches[1][1] + $matches[2][1] + mb_strlen($matches[2][0]);
@@ -113,10 +117,7 @@ class TelegramController extends Controller
             ->findAll();
 
         $this->process();
-
-//        die(json_encode(array(
-//            'status' => 'OK'
-//        )));
+        die("");
     }
 
     public function setHookAction()
