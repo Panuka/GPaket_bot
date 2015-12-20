@@ -117,7 +117,7 @@ class TelegramController extends Controller
             ->findAll();
 
         $this->process();
-        die("");
+        die("ok");
     }
 
     public function setHookAction()
