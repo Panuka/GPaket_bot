@@ -1,0 +1,16 @@
+GpaketBundle\Entity\Log:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\LogRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        data:
+            type: text
+        date:
+            type: datetime
+    lifecycleCallbacks: {  }
