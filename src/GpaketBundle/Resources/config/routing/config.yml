@@ -1,0 +1,24 @@
+config_list:
+    path:     /admin/config/
+    defaults: { _controller: "GpaketBundle:Config:index" }
+    methods:  GET
+
+config_show:
+    path:     /admin/config/{id}/show
+    defaults: { _controller: "GpaketBundle:Config:show" }
+    methods:  GET
+
+config_create:
+    path:     /admin/config/new
+    defaults: { _controller: "GpaketBundle:Config:new" }
+    methods:  [GET, POST]
+
+config_edit:
+    path:     /admin/config/{id}/edit
+    defaults: { _controller: "GpaketBundle:Config:edit" }
+    methods:  [GET, POST]
+
+config_delete:
+    path:     /admin/config/{id}/delete
+    defaults: { _controller: "GpaketBundle:Config:delete" }
+    methods:  DELETE

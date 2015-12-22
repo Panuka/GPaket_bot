@@ -1,3 +1,7 @@
+gpaket_config:
+    resource: "@GpaketBundle/Resources/config/routing/config.yml"
+    prefix:   /config
+
 gpaket_homepage:
     path:     /
     defaults: { _controller: GpaketBundle:Default:index }
@@ -7,6 +11,3 @@ telegram_ep:
 telegram_setHook:
     path:     /telegram/setHook
     defaults: { _controller: GpaketBundle:Telegram:setHook }
-telegram_init:
-    path:     /telegram/init
-    defaults: { _controller: GpaketBundle:Telegram:init }

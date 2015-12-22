@@ -1,4 +1,6 @@
 services:
-#    gpaket.example:
-#        class: GpaketBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    gpaket.admin.config:
+        class: GpaketBundle\Admin\ConfigAdmin
+        arguments: [~, GpaketBundle\Entity\Config, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Config }
