@@ -33,7 +33,7 @@ class TelegramController extends Controller
 
     private function regExp($word)
     {
-        return "/([\\W]|^)($word)[!)[.:;\"'*0-9? ]*$/u";
+        return "/([\\W]|^)($word)[^a-zа-я]{0,4}$/ui";
     }
 
     private function convertToUtf8($text)
@@ -66,13 +66,10 @@ class TelegramController extends Controller
                 $reply = $msg['message']['message_id'];
                 $letter_start = $matches[0][1] + $matches[1][1] + $matches[2][1] + mb_strlen($matches[2][0]);
                 $letter_total = mb_strlen($txt) - $letter_start;
-                $_txt = $this->convertToUtf8(
-                    mb_substr(
+                $_txt = mb_substr(
                         $msg['message']['text'],
                         $letter_start,
-                        $letter_total
-                    )
-                );
+                        $letter_total);
                 $_answ = $dic->getAnswers();
                 $text = urlencode($_answ[array_rand($_answ)] . $_txt);
                 $this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
