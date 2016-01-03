@@ -1,12 +1,5 @@
 config.php
-.idea/.name
-.idea/deployment.xml
-.idea/encodings.xml
-.idea/gpaket.iml
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/workspace.xml
+.idea
 /var/bootstrap.php.cache
 /var/cache/*
 /app/config/parameters.yml
