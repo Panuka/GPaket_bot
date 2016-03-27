@@ -10,6 +10,4 @@ class DefaultController extends Controller
     public function indexAction() {
         return $this->render('GpaketBundle:Default:index.html.twig');
     }
-
-
 }

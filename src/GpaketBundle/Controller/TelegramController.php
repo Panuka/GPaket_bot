@@ -3,6 +3,7 @@
 namespace GpaketBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,11 +37,6 @@ class TelegramController extends Controller
         return "/([\\W]|^)($word)[^a-zа-я]{0,4}$/ui";
     }
 
-    private function convertToUtf8($text)
-    {
-        return mb_convert_encoding($text, 'UTF8', mb_detect_encoding($text));
-    }
-
     private function addToLog($data) {
         $log = new Log();
         $dt = new \DateTime();
@@ -53,12 +49,8 @@ class TelegramController extends Controller
     public function process()
     {
         $msg = json_decode(file_get_contents('php://input'), true);
-//        $msg = json_decode('{"update_id":979812671,"message":{"message_id":235747,"from":{"id":90819247,"first_name":"Kirill","last_name":"Nikolaenko","username":"JIoBsTeP"},"chat":{"id":90819247,"first_name":"Kirill","last_name":"Nikolaenko","username":"JIoBsTeP","type":"private"},"date":1450594314,"text":"\u043d\u0435\u0442"}}', true);
-        $this->addToLog($msg);
-
-
-        $msg_text = $msg['message']['text'];
-        $txt = mb_strtolower($msg_text, 'UTF8');
+        $msg_text = Encoding::toUTF8($msg['message']['text']);
+        $txt = mb_strtolower($msg_text);
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
             if ($matches = $this->isRegexpMatch($preg, $txt)) {

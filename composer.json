@@ -29,6 +29,7 @@
         "sensio/generator-bundle": "^3.0",
         "incenteev/composer-parameter-handler": "^2.0",
         "sonata-project/admin-bundle": "dev-master",
+        "neitanod/forceutf8": "dev-master",
         "sonata-project/doctrine-orm-admin-bundle": "dev-master"
     },
     "require-dev": {
