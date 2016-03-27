@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
+use GpaketBundle\Text\Similarity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,10 +29,6 @@ class TelegramController extends Controller
      */
     private $dictionary;
 
-
-
-
-
     private function regExp($word)
     {
         $n = mb_strlen($word);
@@ -52,12 +49,10 @@ class TelegramController extends Controller
         $this->db->flush();
     }
 
-    public function process()
-    {
+    public function process() {
         $msg = json_decode(file_get_contents('php://input'), true);
         $this->addToLog($msg);
-        $msg_text = Encoding::toUTF8($msg['message']['text']);
-        $txt = mb_strtolower($msg_text);
+        $txt = $this->normalize_text($msg['message']['text']);
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
             if ($matches = $this->isRegexpMatch($preg, $txt)) {
@@ -70,6 +65,27 @@ class TelegramController extends Controller
                 $this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
             }
         }
+    }
+
+    private function normalize_text($txt) {
+        $txt = Encoding::toUTF8($txt);
+        $txt = mb_strtolower($txt);
+        $n = mb_strlen($txt);
+        if (Similarity::isCyr($txt))
+            $find_sym = ['a', 'у', 'е', 'х', 'а', 'р', 'о', 'с'];
+        else
+            $find_sym = ['e', 'y', 'i', 'o', 'p', 'a', 'l', 'x', 'c'];
+        $_w = "";
+        for ($i = 0; $i<$n; $i++) {
+            $cur_sym = mb_substr($txt, $i, 1);
+            foreach ($find_sym as $s)
+                if (Similarity::isSimilarity($cur_sym, $s)) {
+                    $_w .= $s;
+                    continue 2;
+                }
+            $_w .= $cur_sym;
+        }
+        return $_w;
     }
 
     private function isRegexpMatch($regexp, $txt)
