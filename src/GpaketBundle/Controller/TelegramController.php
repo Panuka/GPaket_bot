@@ -34,7 +34,7 @@ class TelegramController extends Controller
 
     private function regExp($word)
     {
-        return "/([\\W]|^)($word)[^a-zа-я]{0,4}$/ui";
+        return "/([\\W]|^)({$word})[\\W\\w]{0,4}$/ui";
     }
 
     private function addToLog($data) {
@@ -49,19 +49,16 @@ class TelegramController extends Controller
     public function process()
     {
         $msg = json_decode(file_get_contents('php://input'), true);
+        $this->addToLog($msg);
         $msg_text = Encoding::toUTF8($msg['message']['text']);
         $txt = mb_strtolower($msg_text);
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
             if ($matches = $this->isRegexpMatch($preg, $txt)) {
-                $chat_id = $msg['message']['chat']['id'];
-                $reply = $msg['message']['message_id'];
-                $letter_start = $matches[0][1] + $matches[1][1] + $matches[2][1] + mb_strlen($matches[2][0]);
-                $letter_total = mb_strlen($txt) - $letter_start;
-                $_txt = mb_substr(
-                        $msg['message']['text'],
-                        $letter_start,
-                        $letter_total);
+//                $chat_id = $msg['message']['chat']['id'];
+//                $reply = $msg['message']['message_id'];
+                $letter_start = mb_strpos($txt, $matches[2]) + mb_strlen($matches[2]);
+                $_txt = mb_substr($txt, $letter_start);
                 $_answ = $dic->getAnswers();
                 $text = urlencode($_answ[array_rand($_answ)] . $_txt);
                 $this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
@@ -71,7 +68,7 @@ class TelegramController extends Controller
 
     private function isRegexpMatch($regexp, $txt)
     {
-        if (preg_match($regexp, $txt, $matches, PREG_OFFSET_CAPTURE) === 1)
+        if (preg_match($regexp, $txt, $matches) === 1)
             return $matches;
         else
             return false;
