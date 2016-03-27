@@ -13,5 +13,5 @@ GpaketBundle\Entity\Dictionary:
             type: string
             length: 255
         answers:
-            type: array
+            type: json_array
     lifecycleCallbacks: {  }

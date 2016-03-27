@@ -68,7 +68,7 @@ class Dictionary
     /**
      * Set answers
      *
-     * @param array $answers
+     * @param json_array $answers
      *
      * @return Dictionary
      */
@@ -82,7 +82,7 @@ class Dictionary
     /**
      * Get answers
      *
-     * @return array
+     * @return json_array
      */
     public function getAnswers()
     {

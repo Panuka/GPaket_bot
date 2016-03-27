@@ -34,6 +34,12 @@ class TelegramController extends Controller
 
     private function regExp($word)
     {
+        $n = mb_strlen($word);
+        $_w = "";
+        for ($i = 0; $i<$n; $i++) {
+            $_w .= mb_substr($word, $i, 1).'+';
+        }
+        $word = $_w;
         return "/([\\W]|^)({$word})[\\W\\w]{0,4}$/ui";
     }
 
@@ -55,8 +61,8 @@ class TelegramController extends Controller
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
             if ($matches = $this->isRegexpMatch($preg, $txt)) {
-//                $chat_id = $msg['message']['chat']['id'];
-//                $reply = $msg['message']['message_id'];
+                $chat_id = $msg['message']['chat']['id'];
+                $reply = $msg['message']['message_id'];
                 $letter_start = mb_strpos($txt, $matches[2]) + mb_strlen($matches[2]);
                 $_txt = mb_substr($txt, $letter_start);
                 $_answ = $dic->getAnswers();
