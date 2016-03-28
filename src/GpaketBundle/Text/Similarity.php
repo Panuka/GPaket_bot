@@ -19,7 +19,7 @@ Class Similarity {
         $draw = new \ImagickDraw();
 
         /* Font properties */
-        $draw->setFont('/Library/Fonts/Arial.ttf');
+        $draw->setFont('fonts/Arial.ttf');
         $draw->setFontSize(100);
         $metrics = $image->queryFontMetrics($draw, $text);
         $draw->annotation(0, $metrics['ascender'], $text);
