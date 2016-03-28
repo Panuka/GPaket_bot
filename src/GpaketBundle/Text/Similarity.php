@@ -31,6 +31,8 @@ Class Similarity {
     }
 
     public static function isSimilarity($_a, $_b) {
+        if ($_a == $_b)
+            return true;
         $a = self::getImageWithText($_a);
         $r = $a->compareImages(self::getImageWithText($_b), \Imagick::METRIC_MEANSQUAREERROR);
         return $r[1]<=self::$e;

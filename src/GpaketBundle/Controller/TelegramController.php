@@ -71,19 +71,27 @@ class TelegramController extends Controller
         $txt = Encoding::toUTF8($txt);
         $txt = mb_strtolower($txt);
         $n = mb_strlen($txt);
-        if (Similarity::isCyr($txt))
+        $cyr = [224, 255];
+        $lat = [65, 90];
+        if (Similarity::isCyr($txt)) {
+            $not_check = $cyr;
             $find_sym = ['a', 'у', 'е', 'х', 'а', 'р', 'о', 'с'];
-        else
+        } else {
+            $not_check = $lat;
             $find_sym = ['e', 'y', 'i', 'o', 'p', 'a', 'l', 'x', 'c'];
+        }
         $_w = "";
         for ($i = 0; $i<$n; $i++) {
             $cur_sym = mb_substr($txt, $i, 1);
-            foreach ($find_sym as $s)
-                if (Similarity::isSimilarity($cur_sym, $s)) {
-                    $_w .= $s;
-                    continue 2;
-                }
+            $num_cur_sym = ord($cur_sym);
+            if ($num_cur_sym<$not_check || $num_cur_sym>$not_check)
+                foreach ($find_sym as $s)
+                    if (Similarity::isSimilarity($cur_sym, $s)) {
+                        $cur_sym = $s;
+                        break;
+                    }
             $_w .= $cur_sym;
+
         }
         return $_w;
     }
@@ -125,7 +133,7 @@ class TelegramController extends Controller
             ->findAll();
 
         $this->process();
-        die("ok");
+        return new Response('ok');
     }
 
     public function setHookAction()
