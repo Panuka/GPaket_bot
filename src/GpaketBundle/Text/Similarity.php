@@ -12,6 +12,7 @@ namespace GpaketBundle\Text;
 Class Similarity {
 
     private static $e = 0.009;
+    private static $font_size = 15;
 
     static private function getImageWithText($text) {
         /* Create Imagick objects */
@@ -20,7 +21,7 @@ Class Similarity {
 
         /* Font properties */
         $draw->setFont('fonts/Arial.ttf');
-        $draw->setFontSize(16);
+        $draw->setFontSize(self::$font_size);
         $metrics = $image->queryFontMetrics($draw, $text);
         $draw->annotation(0, $metrics['ascender'], $text);
 

@@ -70,7 +70,6 @@ class TelegramController extends Controller
     private function normalize_text($txt) {
         $txt = Encoding::toUTF8($txt);
         $txt = mb_strtolower($txt);
-        return $txt;
         $n = mb_strlen($txt);
         $cyr = [224, 255];
         $lat = [65, 90];
