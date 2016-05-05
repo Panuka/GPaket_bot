@@ -20,7 +20,7 @@ Class Similarity {
 
         /* Font properties */
         $draw->setFont('fonts/Arial.ttf');
-        $draw->setFontSize(100);
+        $draw->setFontSize(16);
         $metrics = $image->queryFontMetrics($draw, $text);
         $draw->annotation(0, $metrics['ascender'], $text);
 
