@@ -55,7 +55,7 @@ class TelegramController extends Controller
         $txt = $this->normalize_text($msg['message']['text']);
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());
-            if ($matches = $this->isRegexpMatch($preg, $txt)) {
+            if (($matches = $this->isRegexpMatch($preg, $txt)) && ((rand(0, 3)>=2))) {
                 $chat_id = $msg['message']['chat']['id'];
                 $reply = $msg['message']['message_id'];
                 $letter_start = mb_strpos($txt, $matches[2]) + mb_strlen($matches[2]);

@@ -54,7 +54,17 @@ class Log
      */
     public function getData()
     {
-        return $this->data;
+    	$data = json_decode($this->data, true);
+	    $user = '';
+	    $msg = '';
+	    $time = '';
+	    if (isset($data['message']))
+		    $time = date('d m Y H:m:i', $data['message']['date']);
+	    if (isset($data['message']['from']['username']))
+	        $user = $data['message']['from']['username'];
+	    if (isset($data['message']['text']))
+	        $msg = $data['message']['text'];
+        return "[$time] {$user}: $msg";
     }
 
     /**

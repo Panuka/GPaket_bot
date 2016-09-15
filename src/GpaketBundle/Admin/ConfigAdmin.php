@@ -2,17 +2,14 @@
 
 namespace GpaketBundle\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
-class ConfigAdmin extends Admin
+class ConfigAdmin extends AbstractAdmin
 {
-
-    protected $baseRouteName = 'config';
-
     /**
      * @param DatagridMapper $datagridMapper
      */
@@ -34,7 +31,7 @@ class ConfigAdmin extends Admin
             ->add('id')
             ->add('value')
             ->add('group')
-            ->add('_action', 'actions', array(
+            ->add('_action', null, array(
                 'actions' => array(
                     'show' => array(),
                     'edit' => array(),

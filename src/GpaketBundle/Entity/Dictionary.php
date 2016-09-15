@@ -74,7 +74,7 @@ class Dictionary
      */
     public function setAnswers($answers)
     {
-        $this->answers = $answers;
+        $this->answers = explode(',', $answers);
 
         return $this;
     }
@@ -86,6 +86,6 @@ class Dictionary
      */
     public function getAnswers()
     {
-        return $this->answers;
+        return implode(',', $this->answers);
     }
 }

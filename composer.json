@@ -28,9 +28,9 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "sensio/generator-bundle": "^3.0",
         "incenteev/composer-parameter-handler": "^2.0",
-        "sonata-project/admin-bundle": "dev-master",
+        "sonata-project/admin-bundle": "3.x-dev",
         "neitanod/forceutf8": "dev-master",
-        "sonata-project/doctrine-orm-admin-bundle": "dev-master"
+        "sonata-project/doctrine-orm-admin-bundle": "3.x-dev"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.7"

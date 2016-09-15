@@ -1,6 +1,18 @@
 services:
     gpaket.admin.config:
         class: GpaketBundle\Admin\ConfigAdmin
-        arguments: [~, GpaketBundle\Entity\Config, SonataAdminBundle:CRUD]
+        arguments: [~, GpaketBundle\Entity\Config, GpaketBundle:ConfigAdmin]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Config }
+
+    gpaket.admin.log:
+        class: GpaketBundle\Admin\LogAdmin
+        arguments: [~, GpaketBundle\Entity\Log, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Log }
+
+    gpaket.admin.dictionary:
+        class: GpaketBundle\Admin\DictionaryAdmin
+        arguments: [~, GpaketBundle\Entity\Dictionary, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Dictionary }
