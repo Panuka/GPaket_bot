@@ -1,7 +1,7 @@
 services:
     gpaket.admin.config:
         class: GpaketBundle\Admin\ConfigAdmin
-        arguments: [~, GpaketBundle\Entity\Config, GpaketBundle:ConfigAdmin]
+        arguments: [~, GpaketBundle\Entity\Config, SonataAdminBundle:CRUD]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Config }
 
