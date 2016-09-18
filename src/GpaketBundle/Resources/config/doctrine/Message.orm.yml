@@ -13,6 +13,10 @@ GpaketBundle\Entity\Message:
         text:
             nullable: true
             type: text
+    oneToMany:
+        logs:
+            targetEntity: Log
+            mappedBy: message
     manyToOne:
         reply_to_message:
             targetEntity: Message

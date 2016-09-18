@@ -181,4 +181,50 @@ class Message
     {
         return $this->chat;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $logs;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add log
+     *
+     * @param \GpaketBundle\Entity\Log $log
+     *
+     * @return Message
+     */
+    public function addLog(\GpaketBundle\Entity\Log $log)
+    {
+        $this->logs[] = $log;
+
+        return $this;
+    }
+
+    /**
+     * Remove log
+     *
+     * @param \GpaketBundle\Entity\Log $log
+     */
+    public function removeLog(\GpaketBundle\Entity\Log $log)
+    {
+        $this->logs->removeElement($log);
+    }
+
+    /**
+     * Get logs
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLogs()
+    {
+        return $this->logs;
+    }
 }

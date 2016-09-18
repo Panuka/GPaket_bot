@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AppUpdateDbCommand extends ContainerAwareCommand
 {
 	private $logs_id = [];
+	private $log;
 	/**
 	 * @var EntityManager
 	 */
@@ -119,58 +120,81 @@ class AppUpdateDbCommand extends ContainerAwareCommand
 
 	    if (isset($log['edited_message']))
 		    $log['message'] = $log['edited_message'];
-	    $message_id = $log['message']['message_id'];
-	    $user_id = $log['message']['from']['id'];
-	    $chat_id = $log['message']['chat']['id'];
 
-
-	    $message = $this->em_message->find($message_id);
-	    $chat = $this->em_chat->find($chat_id);
-	    $user = $this->em_user->find($user_id);
-
-	    if (is_null($message)) {;
-		    $message = new Message();
-		    $dt = new \DateTime();
-		    $dt->setTimestamp($log['message']['date']);
-		    $message->setMessageId($message_id);
-		    $message->setDate($dt);
-		    if (isset($log['message']['reply_to_message']))
-			    $message->setReplyToMessage($this->em_message->find($log['message']['reply_to_message']['message_id']));
-		    if (isset($log['message']['text']))
-			    $message->setText($log['message']['text']);
-		    $this->em->persist($message);
-	    }
-
-	    if (is_null($chat)) {
-		    $chat = new Chat();
-		    $chat->setChatId($chat_id);
-		    if (isset($log['message']['chat']['username']))
-			    $chat->setUsername($log['message']['chat']['username']);
-		    if (isset($log['message']['chat']['title']))
-			    $chat->setTitle($log['message']['chat']['title']);
-		    $chat->setType($log['message']['chat']['type']);
-		    $message->setChat($chat);
-		    $this->em->persist($chat);
-	    } elseif (is_null($message->getChat()))
-		    $message->setChat($chat);
-
-	    if (is_null($user)) {
-		    $user = new User();
-		    $user->setUserId($user_id);
-		    if (isset($log['message']['from']['first_name']))
-			    $user->setFirstName($log['message']['from']['first_name']);
-		    if (isset($log['message']['from']['last_name']))
-			    $user->setLastName($log['message']['from']['last_name']);
-		    if (isset($log['message']['from']['username']))
-			    $user->setUsername($log['message']['from']['username']);
-		    $message->setFrom($user);
-		    $this->em->persist($user);
-	    } elseif (is_null($message->getFrom()))
-		    $message->setFrom($user);
-
-	    $l->setMessage($message);
-	    $l->setUpdateId($update_id);
+	    $this->log = $log;
+	    $this->processLog($l);
 	    $this->em->persist($l);
     }
+
+	private function processMessage() {
+		$message_id = $this->log['message']['message_id'];
+		$message = $this->em_message->find($message_id);
+
+		if (is_null($message)) {
+			$message = new Message();
+			$dt = new \DateTime();
+			$dt->setTimestamp($this->log['message']['date']);
+			$message->setMessageId($message_id);
+			$message->setDate($dt);
+			if (isset($this->log['message']['reply_to_message']))
+				$message->setReplyToMessage($this->em_message->find($this->log['message']['reply_to_message']['message_id']));
+			if (isset($this->log['message']['text']))
+				$message->setText($this->log['message']['text']);
+			$this->em->persist($message);
+		}
+		return $message;
+	}
+
+	private function processUser(Message $message) {
+		$user_id = $this->log['message']['from']['id'];
+		$user = $this->em_user->find($user_id);
+
+		if (is_null($user)) {
+			$user = new User();
+			$user->setUserId($user_id);
+			if (isset($this->log['message']['from']['first_name']))
+				$user->setFirstName($this->log['message']['from']['first_name']);
+			if (isset($this->log['message']['from']['last_name']))
+				$user->setLastName($this->log['message']['from']['last_name']);
+			if (isset($this->log['message']['from']['username']))
+				$user->setUsername($this->log['message']['from']['username']);
+			$message->setFrom($user);
+			$this->em->persist($user);
+		} elseif (is_null($message->getFrom()))
+			$message->setFrom($user);
+	}
+
+	private function processChat(Message $message) {
+		$chat_data = $this->log['message']['chat'];
+		$chat = $this->em_chat->find($chat_data['id']);
+
+		if (is_null($chat)) {
+			$chat = new Chat();
+			$chat->setChatId($chat_data['id']);
+			$chat->setType($chat_data['type']);
+			$this->em->persist($chat);
+		}
+		if (isset($chat_data['username']) && ($chat_data['username']!=$chat->getUsername())) {
+			$chat->setUsername($chat_data['username']);
+			$this->em->persist($chat);
+		}
+		if (isset($chat_data['title']) && ($chat_data['title']!=$chat->getTitle())) {
+			$chat->setTitle($chat_data['title']);
+			$this->em->persist($chat);
+		}
+		if (is_null($message->getChat())) {
+			$message->setChat($chat);
+			$this->em->persist($message);
+		}
+	}
+
+	private function processLog(Log $l) {
+		$message = $this->processMessage();
+
+		$this->processUser($message);
+		$this->processChat($message);
+		$l->setMessage($message);
+		$l->setUpdateId($this->log['update_id']);
+	}
 
 }
