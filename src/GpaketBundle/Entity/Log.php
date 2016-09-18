@@ -8,63 +8,88 @@ namespace GpaketBundle\Entity;
 class Log
 {
     /**
-     * @var int
+     * @var integer
      */
-    private $id;
+    private $update_id;
 
     /**
      * @var string
      */
-    private $data;
+    private $raw;
 
     /**
      * @var \DateTime
      */
     private $date;
 
-
     /**
-     * Get id
-     *
-     * @return int
+     * @var \GpaketBundle\Entity\Message
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $message;
+
 
     /**
-     * Set data
+     * Set updateId
      *
-     * @param string $data
+     * @param integer $updateId
      *
      * @return Log
      */
-    public function setData($data)
+    public function setUpdateId($updateId)
     {
-        $this->data = $data;
+        $this->update_id = $updateId;
+
+        return $this;
+    }
+
+
+	public function getMsg()
+	{
+		$data = json_decode($this->raw, true);
+		$user = '';
+		$msg = '';
+		$time = '';
+		if (isset($data['message']))
+			$time = date('d m Y H:m:i', $data['message']['date']);
+		if (isset($data['message']['from']['username']))
+			$user = $data['message']['from']['username'];
+		if (isset($data['message']['text']))
+			$msg = $data['message']['text'];
+		return "[$time] {$user}: $msg";
+	}
+
+    /**
+     * Get updateId
+     *
+     * @return integer
+     */
+    public function getUpdateId()
+    {
+        return $this->update_id;
+    }
+
+    /**
+     * Set raw
+     *
+     * @param string $raw
+     *
+     * @return Log
+     */
+    public function setRaw($raw)
+    {
+        $this->raw = $raw;
 
         return $this;
     }
 
     /**
-     * Get data
+     * Get raw
      *
      * @return string
      */
-    public function getData()
+    public function getRaw()
     {
-    	$data = json_decode($this->data, true);
-	    $user = '';
-	    $msg = '';
-	    $time = '';
-	    if (isset($data['message']))
-		    $time = date('d m Y H:m:i', $data['message']['date']);
-	    if (isset($data['message']['from']['username']))
-	        $user = $data['message']['from']['username'];
-	    if (isset($data['message']['text']))
-	        $msg = $data['message']['text'];
-        return "[$time] {$user}: $msg";
+        return $this->raw;
     }
 
     /**
@@ -89,5 +114,29 @@ class Log
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set message
+     *
+     * @param \GpaketBundle\Entity\Message $message
+     *
+     * @return Log
+     */
+    public function setMessage(\GpaketBundle\Entity\Message $message = null)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return \GpaketBundle\Entity\Message
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

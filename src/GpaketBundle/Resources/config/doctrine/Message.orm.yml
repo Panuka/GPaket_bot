@@ -1,0 +1,33 @@
+GpaketBundle\Entity\Message:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\MessageRepository
+    id:
+        message_id:
+            type: integer
+            id: true
+    fields:
+        date:
+            nullable: true
+            type: datetimetz
+        text:
+            nullable: true
+            type: text
+    manyToOne:
+        reply_to_message:
+            targetEntity: Message
+            joinColumn:
+                referencedColumnName: message_id
+        from:
+            targetEntity: User
+            inversedBy: messages
+            joinColumn:
+                name: user_id
+                referencedColumnName: user_id
+        chat:
+            targetEntity: Chat
+            inversedBy: messages
+            joinColumn:
+                name: chat_id
+                referencedColumnName: chat_id
+    lifecycleCallbacks: {  }

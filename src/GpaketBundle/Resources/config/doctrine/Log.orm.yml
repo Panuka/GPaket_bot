@@ -3,14 +3,19 @@ GpaketBundle\Entity\Log:
     table: null
     repositoryClass: GpaketBundle\Repository\LogRepository
     id:
-        id:
+        update_id:
             type: integer
             id: true
-            generator:
-                strategy: AUTO
     fields:
-        data:
+        raw:
             type: text
         date:
             type: datetime
+    manyToOne:
+        message:
+            targetEntity: Message
+            inversedBy: logs
+            joinColumn:
+                name: message_id
+                referencedColumnName: message_id
     lifecycleCallbacks: {  }

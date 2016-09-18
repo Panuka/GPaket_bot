@@ -1523,12 +1523,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataAdminBundle.git",
-                "reference": "8b90ab4045b12cbf5332a4fe7e38c870656fce2b"
+                "reference": "e0dee3c76c5f31e2cd6b5c4489337c6a44ffe94a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/8b90ab4045b12cbf5332a4fe7e38c870656fce2b",
-                "reference": "8b90ab4045b12cbf5332a4fe7e38c870656fce2b",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/e0dee3c76c5f31e2cd6b5c4489337c6a44ffe94a",
+                "reference": "e0dee3c76c5f31e2cd6b5c4489337c6a44ffe94a",
                 "shasum": ""
             },
             "require": {
@@ -1612,7 +1612,7 @@
                 "bootstrap",
                 "sonata"
             ],
-            "time": "2016-09-15 08:04:30"
+            "time": "2016-09-17 16:32:07"
         },
         {
             "name": "sonata-project/block-bundle",
@@ -2493,12 +2493,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "c6f6e05e379d17b4ea2a7683c8b4fa222a05ea9f"
+                "reference": "a86583d226b907fdcb506123a00a65c31952af67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/c6f6e05e379d17b4ea2a7683c8b4fa222a05ea9f",
-                "reference": "c6f6e05e379d17b4ea2a7683c8b4fa222a05ea9f",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/a86583d226b907fdcb506123a00a65c31952af67",
+                "reference": "a86583d226b907fdcb506123a00a65c31952af67",
                 "shasum": ""
             },
             "require": {
@@ -2627,7 +2627,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-09-15 17:50:15"
+            "time": "2016-09-17 19:51:23"
         },
         {
             "name": "twig/extensions",

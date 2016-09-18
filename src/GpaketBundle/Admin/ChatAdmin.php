@@ -8,7 +8,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
-class LogAdmin extends AbstractAdmin
+class ChatAdmin extends AbstractAdmin
 {
     /**
      * @param DatagridMapper $datagridMapper
@@ -16,9 +16,10 @@ class LogAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('update_id')
-            ->add('raw')
-            ->add('date')
+            ->add('chat_id')
+            ->add('title')
+            ->add('username')
+            ->add('type')
         ;
     }
 
@@ -28,9 +29,10 @@ class LogAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('update_id')
-            ->add('raw')
-            ->add('date')
+            ->add('chat_id')
+            ->add('title')
+            ->add('username')
+            ->add('type')
             ->add('_action', null, array(
                 'actions' => array(
                     'show' => array(),
@@ -47,9 +49,10 @@ class LogAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('update_id')
-            ->add('raw')
-            ->add('date')
+            ->add('chat_id')
+            ->add('title')
+            ->add('username')
+            ->add('type')
         ;
     }
 
@@ -59,9 +62,10 @@ class LogAdmin extends AbstractAdmin
     protected function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
-            ->add('update_id')
-            ->add('raw')
-            ->add('date')
+            ->add('chat_id')
+            ->add('title')
+            ->add('username')
+            ->add('type')
         ;
     }
 }

@@ -28,9 +28,9 @@ class DictionaryAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('id')
+	        ->add('id')
             ->add('keyword')
-            ->add('answers')
+            ->add('answers', 'array')
             ->add('_action', null, array(
                 'actions' => array(
                     'show' => array(),
@@ -46,10 +46,10 @@ class DictionaryAdmin extends AbstractAdmin
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
+
         $formMapper
-            ->add('id')
             ->add('keyword')
-            ->add('answers')
+	        ->add('answers', 'sonata_type_native_collection', array('allow_add' => true, 'by_reference' => false, 'allow_delete' => true))
         ;
     }
 
@@ -59,9 +59,8 @@ class DictionaryAdmin extends AbstractAdmin
     protected function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
-            ->add('id')
             ->add('keyword')
-            ->add('answers')
+	        ->add('answers', 'sonata_type_native_collection', array('allow_add' => true, 'by_reference' => false, 'allow_delete' => true))
         ;
     }
 }

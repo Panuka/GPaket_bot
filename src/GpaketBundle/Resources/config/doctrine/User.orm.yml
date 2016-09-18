@@ -1,0 +1,26 @@
+GpaketBundle\Entity\User:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\UserRepository
+    id:
+        user_id:
+            type: integer
+            id: true
+    fields:
+        first_name:
+            type: string
+            nullable: true
+            length: 255
+        last_name:
+            type: string
+            nullable: true
+            length: 255
+        username:
+            type: string
+            nullable: true
+            length: 255
+    oneToMany:
+        messages:
+            targetEntity: Message
+            mappedBy: user
+    lifecycleCallbacks: {  }

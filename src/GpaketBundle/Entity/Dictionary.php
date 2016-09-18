@@ -22,8 +22,6 @@ class Dictionary
      */
     private $answers;
 
-    private $preg_ready = null;
-
 
     /**
      * Get id
@@ -33,12 +31,6 @@ class Dictionary
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getPregKeyword() {
-        if (is_null($this->preg_ready))
-            $this->preg_ready = preg_quote($this->keyword);
-        return $this->preg_ready;
     }
 
     /**
@@ -68,13 +60,13 @@ class Dictionary
     /**
      * Set answers
      *
-     * @param json_array $answers
+     * @param array $answers
      *
      * @return Dictionary
      */
     public function setAnswers($answers)
     {
-        $this->answers = explode(',', $answers);
+        $this->answers = $answers;
 
         return $this;
     }
@@ -82,10 +74,11 @@ class Dictionary
     /**
      * Get answers
      *
-     * @return json_array
+     * @return array
      */
     public function getAnswers()
     {
-        return implode(',', $this->answers);
+        return $this->answers;
     }
 }
+
