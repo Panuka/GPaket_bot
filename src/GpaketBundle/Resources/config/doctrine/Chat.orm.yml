@@ -23,4 +23,9 @@ GpaketBundle\Entity\Chat:
         messages:
             targetEntity: Message
             mappedBy: chat
+
+    manyToMany:
+        users:
+            targetEntity: User
+            mappedBy: chats
     lifecycleCallbacks: {  }

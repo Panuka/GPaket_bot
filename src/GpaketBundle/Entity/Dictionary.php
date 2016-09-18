@@ -81,4 +81,3 @@ class Dictionary
         return $this->answers;
     }
 }
-

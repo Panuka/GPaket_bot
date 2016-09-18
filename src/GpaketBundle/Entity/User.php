@@ -169,4 +169,43 @@ class User
     {
         return $this->messages;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $chats;
+
+
+    /**
+     * Add chat
+     *
+     * @param \GpaketBundle\Entity\Chat $chat
+     *
+     * @return User
+     */
+    public function addChat(\GpaketBundle\Entity\Chat $chat)
+    {
+        $this->chats[] = $chat;
+
+        return $this;
+    }
+
+    /**
+     * Remove chat
+     *
+     * @param \GpaketBundle\Entity\Chat $chat
+     */
+    public function removeChat(\GpaketBundle\Entity\Chat $chat)
+    {
+        $this->chats->removeElement($chat);
+    }
+
+    /**
+     * Get chats
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChats()
+    {
+        return $this->chats;
+    }
 }

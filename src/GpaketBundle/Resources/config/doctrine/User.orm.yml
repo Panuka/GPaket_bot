@@ -23,4 +23,16 @@ GpaketBundle\Entity\User:
         messages:
             targetEntity: Message
             mappedBy: user
+    manyToMany:
+        chats:
+            targetEntity: Chat
+            inversedBy: users
+            joinTable:
+               name: x_users_chats
+               joinColumns:
+                    user_id:
+                        referencedColumnName: user_id
+               inverseJoinColumns:
+                   chat_id:
+                        referencedColumnName: chat_id
     lifecycleCallbacks: {  }
