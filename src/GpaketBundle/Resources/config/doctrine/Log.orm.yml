@@ -16,6 +16,5 @@ GpaketBundle\Entity\Log:
             targetEntity: Message
             inversedBy: logs
             joinColumn:
-                name: message_id
                 referencedColumnName: message_id
     lifecycleCallbacks: {  }

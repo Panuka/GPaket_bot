@@ -45,18 +45,17 @@ class AppUpdateDbCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:update-db')
-            ->setDescription('...')
-            ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
+            ->setDescription('Migrate data to V2')
+            ->addArgument('multiple', InputArgument::REQUIRED, 'Multiple of selected row by one iteration')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 	    $args = $input->getArguments();
-	    $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+	    $this->em = $this->getContainer()->get('doctrine')->getManager();
 
 	    $count = (int) $this->em->createQuery('SELECT COUNT(l.update_id) FROM GpaketBundle\Entity\Log l')->getSingleScalarResult();
-	    $by_page = $args['argument'] * 1000;
+	    $by_page = $args['multiple'] * 1000;
 	    $n = ceil($count/$by_page) + 1;
 
 	    $this->em_user = $this->em->getRepository('GpaketBundle:User');
@@ -78,16 +77,11 @@ class AppUpdateDbCommand extends ContainerAwareCommand
 				            ->getQuery()
 				            ->getResult();
 
-		    if (empty($logs)) {
-			    $output->writeln('Skip.');
+		    if (empty($logs))
 			    continue;
-		    } else {
-			    $output->writeln('Block.');
-			    $output->writeln('Count of elements: ');
-			    $output->writeln(count($logs));
-		    }
 			foreach ($logs as $l)
 				$this->add($l);
+		    $output->writeln('Write block');
 		    $this->write($output);
 
 	    }
@@ -110,58 +104,74 @@ class AppUpdateDbCommand extends ContainerAwareCommand
     private function add(Log $l) {
 	    $log = json_decode($l->getRaw(), true);
 	    $update_id = $log['update_id'];
-	    if ($l->getUpdateId() == $update_id)
-		    return;
-	    elseif (array_search($update_id, $this->logs_id)!==false)
-		    return;
-	    elseif (!is_null($this->em_log->find($update_id)))
-		    return;
+	    if ($this->isNotNeedProccess($l, $update_id)) return;
 	    $this->logs_id[] = $update_id;
 
 	    if (isset($log['edited_message']))
-		    $log['message'] = $log['edited_message'];
+	    	//TODO: Придумать, как поступать с измененными сообщениями.
+		    return; //$log['message'] = $log['edited_message'];
 
 	    $this->log = $log;
 	    $this->processLog($l);
 	    $this->em->persist($l);
     }
 
+    private function isNotNeedProccess(Log $l, $update_id) {
+	    if ($l->getUpdateId() == $update_id)
+		    return true;
+	    elseif (array_search($update_id, $this->logs_id)!==false)
+		    return true;
+	    elseif (!is_null($this->em_log->find($update_id)))
+		    return true;
+	    return false;
+    }
+
 	private function processMessage() {
-		$message_id = $this->log['message']['message_id'];
-		$message = $this->em_message->find($message_id);
+		$message_data = $this->log['message'];
+		$message = $this->em_message->find($message_data['message_id']);
 
 		if (is_null($message)) {
 			$message = new Message();
 			$dt = new \DateTime();
-			$dt->setTimestamp($this->log['message']['date']);
-			$message->setMessageId($message_id);
+			$dt->setTimestamp($message_data['date']);
+			$message->setMessageId($message_data['message_id']);
 			$message->setDate($dt);
-			if (isset($this->log['message']['reply_to_message']))
-				$message->setReplyToMessage($this->em_message->find($this->log['message']['reply_to_message']['message_id']));
-			if (isset($this->log['message']['text']))
-				$message->setText($this->log['message']['text']);
+			$this->em->persist($message);
+		}
+		if (isset($message_data['reply_to_message'])) {
+			$message->setReplyToMessage($this->em_message->find($message_data['reply_to_message']['message_id']));
+			$this->em->persist($message);
+		}
+		if (isset($message_data['text'])) {
+			$message->setText($message_data['text']);
 			$this->em->persist($message);
 		}
 		return $message;
 	}
 
 	private function processUser(Message $message) {
-		$user_id = $this->log['message']['from']['id'];
-		$user = $this->em_user->find($user_id);
+		$user_data = $this->log['message']['from'];
+		$user = $this->em_user->find($user_data['id']);
 
 		if (is_null($user)) {
 			$user = new User();
-			$user->setUserId($user_id);
-			if (isset($this->log['message']['from']['first_name']))
-				$user->setFirstName($this->log['message']['from']['first_name']);
-			if (isset($this->log['message']['from']['last_name']))
-				$user->setLastName($this->log['message']['from']['last_name']);
-			if (isset($this->log['message']['from']['username']))
-				$user->setUsername($this->log['message']['from']['username']);
+			$user->setUserId($user_data['id']);
 			$message->setFrom($user);
 			$this->em->persist($user);
-		} elseif (is_null($message->getFrom()))
-			$message->setFrom($user);
+			$this->em->persist($message);
+		}
+		if (isset($user_data['first_name'])) {
+			$user->setFirstName($user_data['first_name']);
+			$this->em->persist($user);
+		}
+		if (isset($user_data['last_name'])) {
+			$user->setLastName($user_data['last_name']);
+			$this->em->persist($user);
+		}
+		if (isset($user_data['username'])) {
+			$user->setUsername($user_data['username']);
+			$this->em->persist($user);
+		}
 	}
 
 	private function processChat(Message $message) {
@@ -193,6 +203,7 @@ class AppUpdateDbCommand extends ContainerAwareCommand
 
 		$this->processUser($message);
 		$this->processChat($message);
+
 		$l->setMessage($message);
 		$l->setUpdateId($this->log['update_id']);
 	}
