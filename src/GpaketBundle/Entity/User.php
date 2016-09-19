@@ -184,7 +184,7 @@ class User
      */
     public function addChat(\GpaketBundle\Entity\Chat $chat)
     {
-        $this->chats[] = $chat;
+        $this->chats[$chat->getChatId()] = $chat;
 
         return $this;
     }
