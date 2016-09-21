@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=5.5.9",
-        "symfony/symfony": "dev-master",
+        "symfony/symfony": "3.1",
         "symfony/security-acl": "dev-master",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
@@ -30,7 +30,9 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "sonata-project/admin-bundle": "3.x-dev",
         "neitanod/forceutf8": "dev-master",
-        "sonata-project/doctrine-orm-admin-bundle": "3.x-dev"
+        "sonata-project/doctrine-orm-admin-bundle": "3.x-dev",
+        "symfony/security": "3.1.x-dev",
+        "friendsofsymfony/user-bundle": "2.0.x-dev"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.7"

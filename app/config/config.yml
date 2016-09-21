@@ -11,7 +11,8 @@ parameters:
 
 framework:
     #esi:             ~
-    translator:      { fallbacks: ["%locale%"] }
+    #translator:      { fallbacks: ["%locale%"] }
+    translator: ~
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -69,6 +70,11 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+fos_user:
+    db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
+    firewall_name: main
+    user_class: GpaketBundle\Entity\User
+
 sonata_block:
     default_contexts: [sonata_page_bundle]
     blocks:
@@ -91,6 +97,3 @@ sonata_block:
         #    templates:
         #       - { name: 'Simple', template: 'AcmeDemoBundle:Block:demo_simple.html.twig' }
         #       - { name: 'Big',    template: 'AcmeDemoBundle:Block:demo_big.html.twig' }
-sonata_admin:
-    templates:
-        dashboard: SonataAdminBundle:Core:dashboard.html.twig
