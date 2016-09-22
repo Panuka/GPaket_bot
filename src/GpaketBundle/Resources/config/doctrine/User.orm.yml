@@ -19,6 +19,59 @@ GpaketBundle\Entity\User:
             type: string
             nullable: true
             length: 255
+        usernameCanonical:
+            column: username_canonical
+            type: string
+            length: 180
+        email:
+            column: email
+            type: string
+            length: 180
+        emailCanonical:
+            column: email_canonical
+            type: string
+            length: 180
+        enabled:
+            column: enabled
+            type: boolean
+        salt:
+            column: salt
+            type: string
+        password:
+            column: password
+            type: string
+        lastLogin:
+            column: last_login
+            type: datetime
+            nullable: true
+        locked:
+            column: locked
+            type: boolean
+        expired:
+            column: expired
+            type: boolean
+        expiresAt:
+            column: expires_at
+            type: datetime
+            nullable: true
+        confirmationToken:
+            column: confirmation_token
+            type: string
+            nullable: true
+        passwordRequestedAt:
+            column: password_requested_at
+            type: datetime
+            nullable: true
+        roles:
+            column: roles
+            type: array
+        credentialsExpired:
+            column: credentials_expired
+            type: boolean
+        credentialsExpireAt:
+            column: credentials_expire_at
+            type: datetime
+            nullable: true
     oneToMany:
         messages:
             targetEntity: Message

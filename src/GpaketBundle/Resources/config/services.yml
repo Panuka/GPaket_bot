@@ -29,6 +29,9 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Message }
 
+    gpaket.user.provider:
+        class: GpaketBundle\Model\UserProvider
+
     gpaket.admin.user:
         class: GpaketBundle\Admin\UserAdmin
         arguments: [~, GpaketBundle\Entity\User, SonataAdminBundle:CRUD]
