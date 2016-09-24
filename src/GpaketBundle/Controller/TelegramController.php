@@ -9,6 +9,7 @@ use GpaketBundle\Entity\Log;
 use GpaketBundle\Text\Similarity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Telegram\Bot\Api;
 
 class TelegramController extends Controller {
 	/**
@@ -28,6 +29,13 @@ class TelegramController extends Controller {
 	 */
 	private $dictionary;
 
+	/**
+	 * @var Api TelegramRequest
+	 */
+	private $telegram;
+
+	private $msg;
+
 	private function regExp($word) {
 		$n = mb_strlen($word);
 		$_w = "";
@@ -38,40 +46,68 @@ class TelegramController extends Controller {
 		return "/([\\W]|^)({$word})[\\W\\w]{0,4}$/ui";
 	}
 
-	private function addToLog($data) {
+	private function addToLog() {
 		$log = new Log();
 		$dt = new \DateTime();
-		$data_json = json_encode($data, true);
-		if (!is_null($this->db->getRepository('GpaketBundle:Log')->find($data['update_id'])))
-			return false;
-		if (!isset($data['message']['text']))
-			return false;
-		$log->setUpdateId($data['update_id']);
-		$log->setRaw($data_json);
+		$log->setUpdateId($this->msg['update_id']);
+		$log->setRaw(file_get_contents('php://input'));
 		$log->setDate($dt);
 		$this->db->persist($log);
 		$this->db->flush();
-		return true;
 	}
 
 	public function process() {
+		if (!$this->prepare())
+			return false;
+
+		$method = $this->checkType();
+		$this->whisperToLobster($method);
+		$this->paket();
+
+	}
+
+	function auth() {
+		
+	}
+
+	private function checkType() {
+		$function = 'default';
+		$str = $this->msg['message']['text'];
+		if ($str[0] === '/' && strlen($str)<8 && strlen($str)>2)
+			if (method_exists($this, $str))
+				$function = $str;
+		return $function;
+	}
+
+	private function prepare() {
 		$msg = json_decode(file_get_contents('php://input'), true);
-		if (is_array($msg) > 0)
-			if (!$this->addToLog($msg))
-				return false;
-		$txt = $this->normalize_text($msg['message']['text']);
+		if (!is_null($this->db->getRepository('GpaketBundle:Log')->find($this->msg['update_id'])) || !isset($this->msg['message']['text']) || !is_array($this->msg))
+			return false;
+		$this->msg = $msg;
+		return true;
+	}
+
+	private function paket() {
+		$this->addToLog();
+		$txt = $this->normalize_text($this->msg['message']['text']);
 		foreach ($this->dictionary as $dic_id => $dic) {
 			$preg = $this->regExp($dic->getPregKeyword());
 			if (($matches = $this->isRegexpMatch($preg, $txt)) && ((rand(0, 3) >= 2))) {
-				$chat_id = $msg['message']['chat']['id'];
-				$reply = $msg['message']['message_id'];
+				$chat_id = $this->msg['message']['chat']['id'];
+				$reply = $this->msg['message']['message_id'];
 				$letter_start = mb_strpos($txt, $matches[2]) + mb_strlen($matches[2]);
 				$_txt = mb_substr($txt, $letter_start);
 				$_answ = $dic->getAnswers();
 				$text = urlencode($_answ[array_rand($_answ)] . $_txt);
-				$this->makeRequest("/sendMessage?chat_id=$chat_id&text=$text&reply_to_message_id=$reply");
+
+				return $this->telegram->sendMessage([
+					'chat_id' => $chat_id,
+					'text' => $text,
+					'reply_to_message_id' => $reply,
+				]);
 			}
 		}
+		return false;
 	}
 
 	private function normalize_text($txt) {
@@ -132,6 +168,13 @@ class TelegramController extends Controller {
 		return $response;
 	}
 
+	private function whisperToLobster($data) {
+		$this->telegram->sendMessage([
+			'chat_id' => '90819247',
+			'text' => json_encode($data)
+		]);
+	}
+
 	private function setHook($file) {
 		$url = "https://$_SERVER[SERVER_NAME]/$file";
         return $this->makeRequest("/setWebhook?url=$url");
@@ -139,53 +182,48 @@ class TelegramController extends Controller {
 	private function setKeyboard() {
 		$keyboard = [
 			['Авторизация'],
-			['Смена пароля']
+			['Смена пароля'],
+			['нет', 'да']
 		];
 
-		$reply_markup = [
+		$reply_markup = $this->telegram->replyKeyboardMarkup([
 			'keyboard' => $keyboard,
-			'resize_keyboard' => true,
-			'one_time_keyboard' => true
-		];
+			'resize_keyboard' => true
+		]);
 
-		$map = [];
-
-		$params = [
-			'chat_id' => 237145829,
-			'text' => 'hello',
-			'reply_to_message_id' => 1749619,
-			'reply_markup' => $reply_markup
-		];
-		return $this->makeRequestParams("/sendMessage", $params);
+		$mp = $this->telegram->forceReply();
+		$response = $this->telegram->sendMessage([
+			'chat_id' => '90819247',
+			'text' => 'Hello World',
+			'reply_markup' => $mp
+		]);
+		return $response;
 	}
 
 	public function indexAction() {
-		$this->db = $this->getDoctrine()->getManager();
-		$this->token = $this->db
-			->getRepository('GpaketBundle:Config')
-			->find('GPAKET_TELEGRAM_TOKEN')
-			->getValue();
-
+		$this->init();
+		$this->telegram = new Api($this->token);
 		$this->dictionary = $this->db
 			->getRepository('GpaketBundle:Dictionary')
 			->findAll();
-
 		$this->process();
 		return new Response('ok');
 	}
 
 	public function setHookAction() {
-		$this->db = $this->getDoctrine()->getManager();
-		$this->token = $this->db->getRepository('GpaketBundle:Config')
-			->find('GPAKET_TELEGRAM_TOKEN')
-			->getValue();
+		$this->init();
 
 //		$data = $this->setHook('telegram/');
 		$data = $this->setKeyboard();
 
+		var_dump($data);die();
+	}
 
-		var_dump($data);
-
-		die();
+	public function init() {
+		$this->db = $this->getDoctrine()->getManager();
+		$this->token = $this->db->getRepository('GpaketBundle:Config')
+			->find('GPAKET_TELEGRAM_TOKEN')
+			->getValue();
+		$this->telegram = new Api($this->token);
 	}
 }
