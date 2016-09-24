@@ -7,6 +7,7 @@ use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
 use GpaketBundle\Text\Similarity;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,15 +44,24 @@ class TelegramController extends Controller
     private function addToLog($data) {
         $log = new Log();
         $dt = new \DateTime();
-        $log->setData(json_encode($data));
+	    $data_json = json_encode($data, true);
+	    if (!is_null($this->db->getRepository('GpaketBundle:Log')->find($data['update_id'])))
+	    	return false;
+	    if (!isset($data['message']['text']))
+	    	return false;
+	    $log->setUpdateId($data['update_id']);
+        $log->setRaw($data_json);
         $log->setDate($dt);
         $this->db->persist($log);
         $this->db->flush();
+	    return true;
     }
 
     public function process() {
         $msg = json_decode(file_get_contents('php://input'), true);
-        $this->addToLog($msg);
+	    if (is_array($msg)>0)
+            if (!$this->addToLog($msg))
+            	return false;
         $txt = $this->normalize_text($msg['message']['text']);
         foreach ($this->dictionary as $dic_id => $dic) {
             $preg = $this->regExp($dic->getPregKeyword());

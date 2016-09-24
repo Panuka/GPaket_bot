@@ -3,12 +3,8 @@
     "license": "proprietary",
     "type": "project",
     "autoload": {
-        "psr-4": {
-            "": "src/"
-        },
-        "files": [
-            "app/AppKernel.php"
-        ]
+        "psr-4": { "": "src/" },
+        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -35,7 +31,8 @@
         "friendsofsymfony/user-bundle": "2.0.x-dev"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^2.7"
+        "sensio/generator-bundle": "^3.0",
+        "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
         "post-install-cmd": [

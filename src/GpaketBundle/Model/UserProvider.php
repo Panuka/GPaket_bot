@@ -52,7 +52,7 @@ class UserProvider implements UserProviderInterface, UserManagerInterface {
 	 * @return UserInterface
 	 */
 	public function findUserByEmail($email) {
-		return $this->findUserBy(array('email' => $this->canonicalizeEmail($email)));
+		return $this->findUserBy(array('email' => $email));
 	}
 
 	/**

@@ -21,17 +21,17 @@ class User implements UserInterface, EquatableInterface  {
 	/**
 	 * @var string
 	 */
-	private $first_name;
+	private $first_name = '';
 
 	/**
 	 * @var string
 	 */
-	private $last_name;
+	private $last_name = '';
 
 	/**
 	 * @var string
 	 */
-	protected $username;
+	protected $username = '';
 
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
@@ -41,17 +41,17 @@ class User implements UserInterface, EquatableInterface  {
 	/**
 	 * @var string
 	 */
-	protected $usernameCanonical;
+	protected $usernameCanonical = '';
 
 	/**
 	 * @var string
 	 */
-	protected $email;
+	protected $email = '';
 
 	/**
 	 * @var string
 	 */
-	protected $emailCanonical;
+	protected $emailCanonical = '';
 
 	/**
 	 * @var boolean
@@ -70,7 +70,7 @@ class User implements UserInterface, EquatableInterface  {
 	 *
 	 * @var string
 	 */
-	protected $password;
+	protected $password = 0;
 
 	/**
 	 * Plain password. Used for model validation. Must not be persisted.
@@ -688,6 +688,9 @@ class User implements UserInterface, EquatableInterface  {
 	 */
 	public function setUsername($username) {
 		$this->username = $username;
+		$this->usernameCanonical = $username;
+		$this->email = $username;
+		$this->emailCanonical = $username;
 		return $this;
 	}
 

@@ -16,12 +16,19 @@ class Dictionary
      * @var string
      */
     private $keyword;
+    private $preg_ready;
 
     /**
      * @var array
      */
     private $answers;
 
+
+	public function getPregKeyword() {
+		if (is_null($this->preg_ready))
+			$this->preg_ready = preg_quote($this->keyword);
+		return $this->preg_ready;
+	}
 
     /**
      * Get id
