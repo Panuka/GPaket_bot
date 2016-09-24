@@ -5,9 +5,5 @@ telegram_ep:
     path:     /telegram/
     defaults: { _controller: GpaketBundle:Telegram:index }
 telegram_setHook:
-    path:     /telegram/setHook
+    path:     /panel/telegram/setHook
     defaults: { _controller: GpaketBundle:Telegram:setHook }
-_sonata_admin:
-    resource: .
-    type: sonata_admin
-    prefix: /admin
