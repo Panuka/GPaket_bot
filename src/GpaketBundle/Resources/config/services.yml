@@ -30,7 +30,9 @@ services:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Message }
 
     gpaket.user.provider:
-        class: GpaketBundle\Model\UserProvider
+        class: GpaketBundle\Provider\GUserProvider
+        public: false
+        arguments: ['@fos_user.user_manager']
 
     gpaket.admin.user:
         class: GpaketBundle\Admin\UserAdmin
