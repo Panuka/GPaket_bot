@@ -6,10 +6,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
+use GpaketBundle\Entity\User;
 use GpaketBundle\Text\Similarity;
+use GuzzleHttp\Client;
+use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Telegram\Bot\Api;
+use Telegram\Bot\HttpClients\GuzzleHttpClient;
 
 class TelegramController extends Controller {
 	/**
@@ -61,29 +65,59 @@ class TelegramController extends Controller {
 			return false;
 
 		$method = $this->checkType();
-		$this->whisperToLobster($method);
-		$this->paket();
+		$this->$method();
+//		$this->whisperToLobster(\GuzzleHttp\json_encode([$this->msg['message']['from']['id'], $method, $this->msg]));
 
 	}
 
-	function auth() {
-		
+	function _auth() {
+		$pwd = substr(md5(uniqid(rand(), true)), 0, 6);
+		$manipulator = $this->get('fos_user.util.user_manipulator');
+		$manipulator->changePassword($this->msg['message']['from']['username'], $pwd);
+		$manipulator->activate($this->msg['message']['from']['username']);
+		return $this->telegram->sendMessage([
+			'chat_id' => $this->msg['message']['chat']['id'],
+			'text' => 'Ваш новый пароль: '.$pwd
+		]);
+	}
+
+	function _help() {
+		return $this->telegram->sendMessage([
+			'chat_id' => $this->msg['message']['chat']['id'],
+			'text' => "Добро пожаловать в бот \"Говна Пакет\". \nПортал проекта: https://gpaketpro.com/"
+		]);
+	}
+
+	function _keys() {
+		$dbkeys = $this->db->getRepository('GpaketBundle:Dictionary')->findAll();
+		$keys = '';
+		foreach ($dbkeys as $k)
+			$keys .= "{$k->getKeyword()}\n";
+		return $this->telegram->sendMessage([
+			'chat_id' => $this->msg['message']['chat']['id'],
+			'text' => "Бот отвечает на сообщения со следующими фразочками: \n$keys"
+		]);
 	}
 
 	private function checkType() {
-		$function = 'default';
+		$function = 'paket';
 		$str = $this->msg['message']['text'];
-		if ($str[0] === '/' && strlen($str)<8 && strlen($str)>2)
+		if ($str[0] === '/' && strlen($str)<10 && strlen($str)>2) {
+			$str = '_'.str_replace('/', '', $str);
 			if (method_exists($this, $str))
 				$function = $str;
+		}
 		return $function;
 	}
 
 	private function prepare() {
-		$msg = json_decode(file_get_contents('php://input'), true);
-		if (!is_null($this->db->getRepository('GpaketBundle:Log')->find($this->msg['update_id'])) || !isset($this->msg['message']['text']) || !is_array($this->msg))
+		$this->msg = json_decode(file_get_contents('php://input'), true);
+		if (
+			(!is_null($this->db->getRepository('GpaketBundle:Log')->find($this->msg['update_id']))) ||
+			(!isset($this->msg['message']['text'])) ||
+			(!is_array($this->msg))
+		)
 			return false;
-		$this->msg = $msg;
 		return true;
 	}
 
@@ -98,7 +132,7 @@ class TelegramController extends Controller {
 				$letter_start = mb_strpos($txt, $matches[2]) + mb_strlen($matches[2]);
 				$_txt = mb_substr($txt, $letter_start);
 				$_answ = $dic->getAnswers();
-				$text = urlencode($_answ[array_rand($_answ)] . $_txt);
+				$text = $_answ[array_rand($_answ)] . $_txt;
 
 				return $this->telegram->sendMessage([
 					'chat_id' => $chat_id,
@@ -169,14 +203,16 @@ class TelegramController extends Controller {
 	}
 
 	private function whisperToLobster($data) {
-		$this->telegram->sendMessage([
-			'chat_id' => '90819247',
-			'text' => json_encode($data)
-		]);
+		if ($this->msg['message']['chat']['id'] == 90819247)
+			return $this->telegram->sendMessage([
+				'chat_id' => '90819247',
+				'text' => json_encode($data)
+			]);
 	}
 
 	private function setHook($file) {
 		$url = "https://$_SERVER[SERVER_NAME]/$file";
+		echo "$url\n";
         return $this->makeRequest("/setWebhook?url=$url");
 	}
 	private function setKeyboard() {
@@ -202,7 +238,6 @@ class TelegramController extends Controller {
 
 	public function indexAction() {
 		$this->init();
-		$this->telegram = new Api($this->token);
 		$this->dictionary = $this->db
 			->getRepository('GpaketBundle:Dictionary')
 			->findAll();
@@ -214,9 +249,11 @@ class TelegramController extends Controller {
 		$this->init();
 
 //		$data = $this->setHook('telegram/');
-		$data = $this->setKeyboard();
+//		$data = $this->setKeyboard();
 
-		var_dump($data);die();
+		$cli = $this->telegram->getClient();
+		var_dump($data);
+		die();
 	}
 
 	public function init() {
@@ -224,6 +261,6 @@ class TelegramController extends Controller {
 		$this->token = $this->db->getRepository('GpaketBundle:Config')
 			->find('GPAKET_TELEGRAM_TOKEN')
 			->getValue();
-		$this->telegram = new Api($this->token);
+		$this->telegram = new Api($this->token, false, new GuzzleHttpClient(new Client(['verify' => false])));
 	}
 }
