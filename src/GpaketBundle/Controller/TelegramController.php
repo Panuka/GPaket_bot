@@ -72,13 +72,21 @@ class TelegramController extends Controller {
 
 	function _auth() {
 		$pwd = substr(md5(uniqid(rand(), true)), 0, 6);
-		$manipulator = $this->get('fos_user.util.user_manipulator');
-		$manipulator->changePassword($this->msg['message']['from']['username'], $pwd);
-		$manipulator->activate($this->msg['message']['from']['username']);
-		return $this->telegram->sendMessage([
-			'chat_id' => $this->msg['message']['chat']['id'],
-			'text' => 'Ваш новый пароль: '.$pwd
-		]);
+		if ($user = $this->db->getRepository('GpaketBundle:User')->find($this->msg['message']['from']['id']))
+			if ($user->getUsername() != '') {
+			$manipulator = $this->get('fos_user.util.user_manipulator');
+			$manipulator->changePassword($this->msg['message']['from']['username'], $pwd);
+			$manipulator->activate($this->msg['message']['from']['username']);
+			return $this->telegram->sendMessage([
+				'chat_id' => $this->msg['message']['chat']['id'],
+				'text' => 'Ваш новый пароль: '.$pwd
+			]);
+		} else {
+			return $this->telegram->sendMessage([
+				'chat_id' => $this->msg['message']['chat']['id'],
+				'text' => 'Невозможно'
+			]);
+		}
 	}
 
 	function _help() {

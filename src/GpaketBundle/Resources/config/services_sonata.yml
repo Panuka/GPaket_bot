@@ -1,0 +1,41 @@
+services:
+    gpaket.admin.log:
+        class: GpaketBundle\Admin\LogAdmin
+        arguments: [~, GpaketBundle\Entity\Log, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Log }
+
+    gpaket.admin.chat:
+        class: GpaketBundle\Admin\ChatAdmin
+        arguments: [~, GpaketBundle\Entity\Chat, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Chat }
+
+    gpaket.admin.config:
+        class: GpaketBundle\Admin\ConfigAdmin
+        arguments: [~, GpaketBundle\Entity\Config, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Config }
+
+    gpaket.admin.dictionary:
+        class: GpaketBundle\Admin\DictionaryAdmin
+        arguments: [~, GpaketBundle\Entity\Dictionary, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Dictionary }
+
+    gpaket.admin.message:
+        class: GpaketBundle\Admin\MessageAdmin
+        arguments: [~, GpaketBundle\Entity\Message, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Message }
+
+    gpaket.admin.user:
+        class: GpaketBundle\Admin\UserAdmin
+        arguments: [~, GpaketBundle\Entity\User, SonataAdminBundle:CRUD]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: User }
+
+    gpaket.user.provider:
+        class: GpaketBundle\Provider\GUserProvider
+        public: false
+        arguments: ['@fos_user.user_manager']
