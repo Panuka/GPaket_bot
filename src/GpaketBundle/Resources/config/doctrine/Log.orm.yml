@@ -1,0 +1,20 @@
+GpaketBundle\Entity\Log:
+    type: entity
+    table: null
+    repositoryClass: GpaketBundle\Repository\LogRepository
+    id:
+        update_id:
+            type: integer
+            id: true
+    fields:
+        raw:
+            type: text
+        date:
+            type: datetime
+    manyToOne:
+        message:
+            targetEntity: Message
+            inversedBy: logs
+            joinColumn:
+                referencedColumnName: message_id
+    lifecycleCallbacks: {  }
