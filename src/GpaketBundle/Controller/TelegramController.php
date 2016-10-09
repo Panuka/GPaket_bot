@@ -7,6 +7,7 @@ use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
 use GpaketBundle\Entity\User;
+use GpaketBundle\Handler\LogHandler;
 use GpaketBundle\Text\Similarity;
 use GuzzleHttp\Client;
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
@@ -17,7 +18,7 @@ use Telegram\Bot\HttpClients\GuzzleHttpClient;
 
 class TelegramController extends Controller {
 	/**
-	 * @var ObjectManager
+	 * @var EntityManager
 	 */
 	private $db = null;
 	/**
@@ -51,13 +52,15 @@ class TelegramController extends Controller {
 	}
 
 	private function addToLog() {
+		$logger = $this->get('monolog.logger.gpaket_input_json');
+		$logger->debug(json_encode($this->msg));
 		$log = new Log();
 		$dt = new \DateTime();
 		$log->setUpdateId($this->msg['update_id']);
 		$log->setRaw(file_get_contents('php://input'));
 		$log->setDate($dt);
-		$this->db->persist($log);
-		$this->db->flush();
+		$lh = new LogHandler($this->db);
+		$lh->add($log)->write();
 	}
 
 	public function process() {
@@ -130,7 +133,6 @@ class TelegramController extends Controller {
 	}
 
 	private function paket() {
-		$this->addToLog();
 		$txt = $this->normalize_text($this->msg['message']['text']);
 		foreach ($this->dictionary as $dic_id => $dic) {
 			$preg = $this->regExp($dic->getPregKeyword());
@@ -142,13 +144,14 @@ class TelegramController extends Controller {
 				$_answ = $dic->getAnswers();
 				$text = $_answ[array_rand($_answ)] . $_txt;
 
-				return $this->telegram->sendMessage([
+				$this->telegram->sendMessage([
 					'chat_id' => $chat_id,
 					'text' => $text,
 					'reply_to_message_id' => $reply,
 				]);
 			}
 		}
+		$this->addToLog();
 		return false;
 	}
 

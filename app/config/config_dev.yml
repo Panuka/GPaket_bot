@@ -12,11 +12,18 @@ web_profiler:
     intercept_redirects: false
 
 monolog:
+    channels:
+        ['gpaket_input_json']
     handlers:
         main:
             type:   stream
             path:   "%kernel.logs_dir%/%kernel.environment%.log"
             level:  debug
+        gpaket_log:
+            type:   stream
+            path:   "%kernel.logs_dir%/%kernel.environment%.gpaket.log"
+            level:  debug
+            channels: [gpaket_input_json]
         console:
             type:   console
             bubble: false

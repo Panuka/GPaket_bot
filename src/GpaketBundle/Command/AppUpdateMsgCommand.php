@@ -3,6 +3,7 @@
 namespace GpaketBundle\Command;
 
 
+use Doctrine\ORM\EntityManager;
 use GpaketBundle\Handler\LogHandler;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
