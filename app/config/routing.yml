@@ -7,6 +7,4 @@ admin_area:
     prefix: /panel/
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-_sonata_admin:
-    resource: .
-    type: sonata_admin
+    

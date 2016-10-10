@@ -26,8 +26,21 @@ security:
     encoders:
         FOS\UserBundle\Model\UserInterface: bcrypt
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_GPAKET_READ:
+            - ROLE_GPAKET_ADMIN_MESSAGE_LIST
+            - ROLE_GPAKET_ADMIN_CHAT_LIST
+            - ROLE_GPAKET_ADMIN_DICTIONARY_LIST
+            - ROLE_GPAKET_ADMIN_USER_LIST
+            - ROLE_GPAKET_ADMIN_USER_VIEW
+            - ROLE_GPAKET_ADMIN_DICTIONARY_VIEW
+            - ROLE_GPAKET_ADMIN_CHAT_VIEW
+            - ROLE_GPAKET_ADMIN_MESSAGE_VIEW
+        ROLE_MANAGER:
+            - ROLE_GPAKET_READ
+        ROLE_ADMIN:       [ROLE_USER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/panel, role: ROLE_ADMIN }
+        - { path: ^/panel, role: ROLE_USER }
+    access_decision_manager:
+        strategy: unanimous

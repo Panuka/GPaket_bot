@@ -75,6 +75,10 @@ fos_user:
     firewall_name: main
     user_class: GpaketBundle\Entity\User
 
+sonata_admin:
+    security:
+        handler: sonata.admin.security.handler.role
+
 sonata_block:
     default_contexts: [sonata_page_bundle]
     blocks:

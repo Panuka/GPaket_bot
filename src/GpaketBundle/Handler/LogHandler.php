@@ -35,7 +35,7 @@ class LogHandler {
 			}
 	}
 
-	public function add(Log $l) {
+	public function add(Log &$l) {
 		$log = json_decode($l->getRaw(), true);
 		if ($this->VERBOSE) echo ".";
 		//TODO: Придумать, как поступать с измененными сообщениями.
@@ -71,34 +71,29 @@ class LogHandler {
 		return $message;
 	}
 
-	private function processUser(Message $message) {
+	private function processUser(Message &$message) {
 		$user_data = $this->log['message']['from'];
 		$user = $this->em->find('GpaketBundle:User', $user_data['id']);
 
 		if (is_null($user)) {
 			$user = new User();
 			$user->setUserId($user_data['id']);
-			$message->setFrom($user);
-			$this->em->persist($user);
-			$this->em->persist($message);
-		}
-		if (isset($user_data['first_name'])) {
-			$user->setFirstName($user_data['first_name']);
-			$this->em->persist($user);
-		}
-		if (isset($user_data['last_name'])) {
-			$user->setLastName($user_data['last_name']);
+			if (isset($user_data['first_name']))
+				$user->setFirstName($user_data['first_name']);
+			if (isset($user_data['last_name']))
+				$user->setLastName($user_data['last_name']);
+			if (isset($user_data['username']))
+				$user->setUsername($user_data['username']);
 			$this->em->persist($user);
 		}
-		if (isset($user_data['username'])) {
-			$user->setUsername($user_data['username']);
-			$this->em->persist($user);
-		}
+
+		$message->setFrom($user);
+		$this->em->persist($message);
 
 		return $user;
 	}
 
-	private function processChat(Message $message) {
+	private function processChat(Message &$message) {
 		$chat_data = $this->log['message']['chat'];
 		$chat = $this->em->find('GpaketBundle:Chat', $chat_data['id']);
 
@@ -124,7 +119,7 @@ class LogHandler {
 		return $chat;
 	}
 
-	private function processLog(Log $l) {
+	private function processLog(Log &$l) {
 		$message = $this->processMessage();
 		$user = $this->processUser($message);
 		$chat = $this->processChat($message);
