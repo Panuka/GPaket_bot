@@ -6,8 +6,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    // главная
+	private $em;
     public function indexAction() {
-        return $this->render('GpaketBundle:Default:index.html.twig');
+	    $params = [];
+	    $params['counts'] = [];
+	    $this->em = $this->getDoctrine()->getManager();
+
+	    $params['counts'] = [
+			'groups' => $this->getCount('chat'),
+			'messages' => $this->getCount('message'),
+			'users' => $this->getCount('user'),
+	    ];
+        return $this->render('GpaketBundle:Default:index.html.twig', $params);
+    }
+
+    private function getCount($entity) {
+	    return $this->em->getRepository('GpaketBundle:'.$entity)
+		                ->createQueryBuilder('s')
+		                ->select('count(s.'.$entity.'_id)')
+		                ->getQuery()
+		                ->getSingleScalarResult();
     }
 }

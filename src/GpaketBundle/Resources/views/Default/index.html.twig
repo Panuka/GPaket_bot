@@ -47,8 +47,12 @@
             <div class="col-lg-12">
                 <div class="intro-message">
                     <h1>@GPaket_BOT</h1>
-
                     <h3>For Telegram. From Russia. With Love.</h3>
+                    <hr class="intro-divider">
+                    <h4>Our stats</h4>
+                    <div>
+                        <span>Messages — <span>{{ counts.messages|number_format(0, '.', '`') }}</span> | Groups — <span>{{ counts.groups }}</span> | Users — <span>{{ counts.users }}</span></span>
+                    </div>
                     <hr class="intro-divider">
                     <ul class="list-inline intro-social-buttons">
                         <li>
