@@ -2,15 +2,12 @@
 
 namespace GpaketBundle\Controller;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use ForceUTF8\Encoding;
 use GpaketBundle\Entity\Dictionary;
 use GpaketBundle\Entity\Log;
-use GpaketBundle\Entity\User;
 use GpaketBundle\Handler\LogHandler;
 use GpaketBundle\Text\Similarity;
 use GuzzleHttp\Client;
-use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Telegram\Bot\Api;
@@ -77,19 +74,19 @@ class TelegramController extends Controller {
 		$pwd = substr(md5(uniqid(rand(), true)), 0, 6);
 		if ($user = $this->db->getRepository('GpaketBundle:User')->find($this->msg['message']['from']['id']))
 			if ($user->getUsername() != '') {
-			$manipulator = $this->get('fos_user.util.user_manipulator');
-			$manipulator->changePassword($this->msg['message']['from']['username'], $pwd);
-			$manipulator->activate($this->msg['message']['from']['username']);
-			return $this->telegram->sendMessage([
-				'chat_id' => $this->msg['message']['chat']['id'],
-				'text' => 'Ваш новый пароль: '.$pwd
-			]);
-		} else {
-			return $this->telegram->sendMessage([
-				'chat_id' => $this->msg['message']['chat']['id'],
-				'text' => 'Невозможно'
-			]);
-		}
+				$manipulator = $this->get('fos_user.util.user_manipulator');
+				$manipulator->changePassword($this->msg['message']['from']['username'], $pwd);
+				$manipulator->activate($this->msg['message']['from']['username']);
+				return $this->telegram->sendMessage([
+					'chat_id' => $this->msg['message']['chat']['id'],
+					'text' => 'Ваш новый пароль: ' . $pwd
+				]);
+			} else {
+				return $this->telegram->sendMessage([
+					'chat_id' => $this->msg['message']['chat']['id'],
+					'text' => 'Невозможно'
+				]);
+			}
 	}
 
 	function _help() {
@@ -113,8 +110,8 @@ class TelegramController extends Controller {
 	private function checkType() {
 		$function = 'paket';
 		$str = $this->msg['message']['text'];
-		if ($str[0] === '/' && strlen($str)<10 && strlen($str)>2) {
-			$str = '_'.str_replace('/', '', $str);
+		if ($str[0] === '/' && strlen($str) < 10 && strlen($str) > 2) {
+			$str = '_' . str_replace('/', '', $str);
 			if (method_exists($this, $str))
 				$function = $str;
 		}
@@ -224,8 +221,9 @@ class TelegramController extends Controller {
 	private function setHook($file) {
 		$url = "https://$_SERVER[SERVER_NAME]/$file";
 		echo "$url\n";
-        return $this->makeRequest("/setWebhook?url=$url");
+		return $this->makeRequest("/setWebhook?url=$url");
 	}
+
 	private function setKeyboard() {
 		$keyboard = [
 			['Авторизация'],
@@ -265,6 +263,20 @@ class TelegramController extends Controller {
 		$cli = $this->telegram->getClient();
 		var_dump($data);
 		die();
+	}
+
+	public function sendAoeAction() {
+		$this->init();
+
+		$chats = $this->db->getRepository('GpaketBundle:Chat')->findAll();
+
+		foreach ($chats as $ch)
+			if ($ch->getType() != 'private') {
+				$this->telegram->sendMessage([
+					'chat_id' => $ch->chatId(),
+					'text' => "Извенений пакет, работоспособность бота восстановлена. \nСпасибо за внимание."
+				]);
+			}
 	}
 
 	public function init() {

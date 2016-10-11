@@ -7,6 +7,9 @@ telegram_ep:
 telegram_setHook:
     path:     /panel/telegram/setHook
     defaults: { _controller: GpaketBundle:Telegram:setHook }
+telegram_sendAoe:
+    path:     /panel/telegram/sendAoe
+    defaults: { _controller: GpaketBundle:Telegram:sendAoe }
 _sonata_admin:
     prefix: /panel
     resource: /panel/
