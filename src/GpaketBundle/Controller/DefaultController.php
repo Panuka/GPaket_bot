@@ -25,6 +25,16 @@ class DefaultController extends Controller
 		                ->createQueryBuilder('s')
 		                ->select('count(s.'.$entity.'_id)')
 		                ->getQuery()
+		                ->useQueryCache(true)
+		                ->useResultCache(true)
 		                ->getSingleScalarResult();
     }
+
+	public function getCountAction($entity) {
+		$this->em = $this->getDoctrine()->getManager();
+		if (in_array($entity, ['chat', 'message', 'user']))
+			die($this->getCount($entity));
+		else
+			die(':P');
+	}
 }

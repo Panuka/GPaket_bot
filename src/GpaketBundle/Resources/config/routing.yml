@@ -10,6 +10,9 @@ telegram_setHook:
 telegram_sendAoe:
     path:     /panel/telegram/sendAoe
     defaults: { _controller: GpaketBundle:Telegram:sendAoe }
+telegram_ajaxCounter:
+    path:     /ajax/{entity}/
+    defaults: { _controller: GpaketBundle:Default:getCount }
 _sonata_admin:
     prefix: /panel
     resource: /panel/
